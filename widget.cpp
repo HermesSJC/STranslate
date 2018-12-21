@@ -143,7 +143,6 @@ void Widget::on_replyFinished(QNetworkReply *reply)
     if(reply->error() == QNetworkReply::NoError)
     {
         QByteArray data = reply->readAll();
-        qDebug() << data;
         int errorIndex = data.indexOf("error_code");
         if(errorIndex != -1)
         {
@@ -155,7 +154,6 @@ void Widget::on_replyFinished(QNetworkReply *reply)
                 list.append(rx.cap(1));
                 pos += rx.matchedLength();
             }
-            qDebug() << list;
             ui->statusLabel->setText(tr("Error Code : %1").arg(list));
             list.clear();
             return;
