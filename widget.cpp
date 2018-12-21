@@ -138,16 +138,35 @@ void Widget::on_historyButton_clicked()
 
 void Widget::on_replyFinished(QNetworkReply *reply)
 {
+
     QVariant rep = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
     if(reply->error() == QNetworkReply::NoError)
     {
         QByteArray data = reply->readAll();
+        qDebug() << data;
+        int errorIndex = data.indexOf("error_code");
+        if(errorIndex != -1)
+        {
+            QRegExp rx("(\\d+)");
+            QString list;
+            int pos = 0;
+            while( (pos = rx.indexIn(data, pos)) != -1  )
+            {
+                list.append(rx.cap(1));
+                pos += rx.matchedLength();
+            }
+            qDebug() << list;
+            ui->statusLabel->setText(tr("Error Code : %1").arg(list));
+            list.clear();
+            return;
+        }
+
+        qDebug() << data;
 
         QJsonObject jsData(QJsonDocument::fromJson(data).object());
         QString string = jsData["trans_result"].toArray()[0].toObject()["dst"].toString();
 
-        ui->translateTextEdit->clear();
-        ui->translateTextEdit->document()->clear();
+
         ui->translateTextEdit->insertPlainText(string);
         *translateTextStream << string << "\r\n";
 

@@ -17,6 +17,7 @@
 #include <QNetworkReply>
 #include <QCryptographicHash>
 #include <QJsonObject>
+#include <QRegExp>
 
 
 namespace Ui {
@@ -44,10 +45,11 @@ private:
 
     struct STranslateSign
     {
-        QString appID = "";                 //app的id
-        QString q;                          //要翻译的字符
-        QString salt = "1466358802";        //随机数 这边可以随便换
-        QString appPassword = "";           //app的id密码
+
+        QString appID = "";
+        QString q;
+        QString salt = "1466358802";
+        QString appPassword = "";
     } SSign;
 
     QByteArray GetSignMD5();
