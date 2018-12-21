@@ -48,7 +48,7 @@ private:
 
         QString appID = "";
         QString q;
-        QString salt = "1466358802";
+        QString salt = "1466355502";
         QString appPassword = "";
     } SSign;
 
@@ -77,6 +77,6 @@ private slots:
 
 };
 
-inline QString Widget::CurrentTime(QString font = "hhmm") { return dateTime->currentDateTime().toString(font); }
+inline QString Widget::CurrentTime(QString font = "hh:mm:ss") { return dateTime->currentDateTime().toString(font); }
 
 #endif // WIDGET_H

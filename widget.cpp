@@ -31,7 +31,7 @@ Widget::Widget(QWidget *parent) :
         dirPath.mkdir("Translate");
     }
 
-    translateFile = new QFile(dirPath.path().append("/Translate/history_%1.txt").arg(CurrentTime()));
+    translateFile = new QFile(dirPath.path().append("/Translate/history.txt"));
     if(translateFile->open(QIODevice::Text | QIODevice::Append))
     {
         translateTextStream = new QTextStream(translateFile);
@@ -39,7 +39,7 @@ Widget::Widget(QWidget *parent) :
     }
     else
     {
-        ui->statusLabel->setText("Translate file create failed");
+        ui->statusLabel->setText(tr("%1 - Translate file create failed").arg(CurrentTime()));
     }
 }
 
@@ -55,7 +55,7 @@ void Widget::on_chooseFileButton_clicked()
     QString filePath = QFileDialog::getOpenFileName(this,QString("Open"),dirPath.path(),"* txt");
     if(filePath.isEmpty())
     {
-        ui->statusLabel->setText("Not choose any file!");
+        ui->statusLabel->setText(tr("%1 - Not choose any file!").arg(CurrentTime()));
         return ;
     }
 
@@ -67,7 +67,7 @@ void Widget::on_chooseFileButton_clicked()
     }
     else
     {
-        ui->statusLabel->setText("Open file failed!");
+        ui->statusLabel->setText(tr("%1 - Open file failed!").arg(CurrentTime()));
     }
 }
 
@@ -87,7 +87,7 @@ void Widget::on_translateButton_clicked()
         texteditData.clear();
 
     }
-    else if(!fileData.isEmpty() && isCreateFile)
+    else if(!fileData.isEmpty())
     {
         ui->translateTextEdit->clear();
         ui->translateTextEdit->document()->clear();
@@ -100,7 +100,7 @@ void Widget::on_translateButton_clicked()
     }
     else
     {
-        ui->statusLabel->setText("There is no translate data!");
+        ui->statusLabel->setText(tr("%1 - There is no translate data!").arg(CurrentTime()));
         return;
     }
 
@@ -143,6 +143,7 @@ void Widget::on_replyFinished(QNetworkReply *reply)
     if(reply->error() == QNetworkReply::NoError)
     {
         QByteArray data = reply->readAll();
+
         int errorIndex = data.indexOf("error_code");
         if(errorIndex != -1)
         {
@@ -154,25 +155,25 @@ void Widget::on_replyFinished(QNetworkReply *reply)
                 list.append(rx.cap(1));
                 pos += rx.matchedLength();
             }
-            ui->statusLabel->setText(tr("Error Code : %1").arg(list));
+            ui->statusLabel->setText(tr("%1 - Error Code : %2").arg(CurrentTime()).arg(list));
             list.clear();
             return;
         }
 
-        qDebug() << data;
-
         QJsonObject jsData(QJsonDocument::fromJson(data).object());
         QString string = jsData["trans_result"].toArray()[0].toObject()["dst"].toString();
 
-
         ui->translateTextEdit->insertPlainText(string);
-        *translateTextStream << string << "\r\n";
+        if(isCreateFile)
+        {
+            *translateTextStream << string << "\r\n";
+        }
 
-        ui->statusLabel->setText("Request Success!");
+        ui->statusLabel->setText(tr("%1 - Request Success!").arg(CurrentTime()));
     }
     else
     {
-        ui->statusLabel->setText("Request Error!");
+        ui->statusLabel->setText(tr("%1 - Request Error!").arg(CurrentTime()));
     }
 }
 
