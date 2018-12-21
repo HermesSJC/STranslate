@@ -155,7 +155,7 @@ void Widget::on_replyFinished(QNetworkReply *reply)
                 list.append(rx.cap(1));
                 pos += rx.matchedLength();
             }
-            ui->statusLabel->setText(tr("%1 - Error Code : %2").arg(CurrentTime()).arg(list));
+            ui->statusLabel->setText(tr("%1 - Error code : %2").arg(CurrentTime()).arg(list));
             list.clear();
             return;
         }
@@ -169,11 +169,11 @@ void Widget::on_replyFinished(QNetworkReply *reply)
             *translateTextStream << string << "\r\n";
         }
 
-        ui->statusLabel->setText(tr("%1 - Request Success!").arg(CurrentTime()));
+        ui->statusLabel->setText(tr("%1 - Request success!").arg(CurrentTime()));
     }
     else
     {
-        ui->statusLabel->setText(tr("%1 - Request Error!").arg(CurrentTime()));
+        ui->statusLabel->setText(tr("%1 - Request error!").arg(CurrentTime()));
     }
 }
 
@@ -185,4 +185,29 @@ QByteArray Widget::GetSignMD5()
     sign = SSign.appID + SSign.q + SSign.salt + SSign.appPassword;
     QByteArray md5 = QCryptographicHash::hash(sign.toUtf8(), QCryptographicHash::Md5);
     return md5;
+}
+
+void Widget::on_keyLineEdit_returnPressed()
+{
+    if(ui->keyLineEdit->text().isEmpty())
+    {
+        ui->statusLabel->setText(tr("%1 - Please input effective key!").arg(CurrentTime()));
+        return;
+    }
+
+    SSign.appPassword = ui->keyLineEdit->text();
+    ui->statusLabel->setText(tr("%1 - Enter key successful!").arg(CurrentTime()));
+
+}
+
+void Widget::on_appIDLineEdit_returnPressed()
+{
+    if(ui->appIDLineEdit->text().isEmpty())
+    {
+        ui->statusLabel->setText(tr("%1 - Please input effective appid!").arg(CurrentTime()));
+        return;
+    }
+
+    SSign.appID = ui->appIDLineEdit->text();
+    ui->statusLabel->setText(tr("%1 - Enter appid successful!").arg(CurrentTime()));
 }

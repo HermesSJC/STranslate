@@ -75,6 +75,8 @@ private:
 private slots:
     void on_replyFinished(QNetworkReply *reply);
 
+    void on_keyLineEdit_returnPressed();
+    void on_appIDLineEdit_returnPressed();
 };
 
 inline QString Widget::CurrentTime(QString font = "hh:mm:ss") { return dateTime->currentDateTime().toString(font); }
