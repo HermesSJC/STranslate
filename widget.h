@@ -11,6 +11,9 @@
 #include <QFileDialog>
 #include <QDateTime>
 #include <QUrl>
+#include <QFileInfo>
+#include <QFile>
+#include <QSettings>
 
 #include <QtNetwork>
 #include <QNetworkAccessManager>
@@ -71,6 +74,8 @@ private:
     inline QString CurrentTime(QString);
 
     QNetworkAccessManager *networkManager;
+
+    QSettings *infoSettings;
 
 private slots:
     void on_replyFinished(QNetworkReply *reply);

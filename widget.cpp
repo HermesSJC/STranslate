@@ -41,6 +41,41 @@ Widget::Widget(QWidget *parent) :
     {
         ui->statusLabel->setText(tr("%1 - Translate file create failed").arg(CurrentTime()));
     }
+
+
+
+    QFile file("info.ini");
+    if(file.exists())
+    {
+        infoSettings = new QSettings("info.ini",QSettings::IniFormat);
+
+        ui->appIDLineEdit->setText(infoSettings->value("info/appid").toString());
+        SSign.appID = ui->appIDLineEdit->text();
+        ui->keyLineEdit->setText(infoSettings->value("info/key").toString());
+        SSign.appPassword = ui->keyLineEdit->text();
+
+    }
+    else
+    {
+        if(file.open(QIODevice::ReadWrite | QIODevice::Text))
+        {
+            file.close();
+            infoSettings = new QSettings("info.ini",QSettings::IniFormat);
+            infoSettings->beginGroup("info");
+
+            infoSettings->setValue("appid","00000000000000000");
+            SSign.appID = "00000000000000000";
+            ui->appIDLineEdit->setText("00000000000000000");
+
+            infoSettings->setValue("key","00000000000000000000");
+            SSign.appPassword = "00000000000000000000";
+            ui->keyLineEdit->setText("00000000000000000000");
+
+            infoSettings->endGroup();
+        }
+    }
+
+
 }
 
 Widget::~Widget()
@@ -189,25 +224,35 @@ QByteArray Widget::GetSignMD5()
 
 void Widget::on_keyLineEdit_returnPressed()
 {
-    if(ui->keyLineEdit->text().isEmpty())
+    QString keyInfo = ui->keyLineEdit->text();
+    if(keyInfo.isEmpty())
     {
         ui->statusLabel->setText(tr("%1 - Please input effective key!").arg(CurrentTime()));
         return;
     }
 
-    SSign.appPassword = ui->keyLineEdit->text();
+    infoSettings->beginGroup("info");
+    infoSettings->setValue("key",keyInfo);
+    infoSettings->endGroup();
+
+    SSign.appPassword = keyInfo;
     ui->statusLabel->setText(tr("%1 - Enter key successful!").arg(CurrentTime()));
 
 }
 
 void Widget::on_appIDLineEdit_returnPressed()
 {
-    if(ui->appIDLineEdit->text().isEmpty())
+    QString appidInfo = ui->appIDLineEdit->text();
+    if(appidInfo.isEmpty())
     {
         ui->statusLabel->setText(tr("%1 - Please input effective appid!").arg(CurrentTime()));
         return;
     }
 
-    SSign.appID = ui->appIDLineEdit->text();
+    infoSettings->beginGroup("info");
+    infoSettings->setValue("appid",appidInfo);
+    infoSettings->endGroup();
+
+    SSign.appID = appidInfo;
     ui->statusLabel->setText(tr("%1 - Enter appid successful!").arg(CurrentTime()));
 }
