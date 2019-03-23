@@ -92,17 +92,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-QByteArray MainWindow::GetSignMD5()
-{
-    //拼接签名
-    QString sign = appID + srcData.toLocal8Bit().data() + salt + key;
-
-    //生成md5
-    QByteArray md5 = QCryptographicHash::hash(sign.toUtf8(), QCryptographicHash::Md5);
-
-    return md5;
-}
-
 void MainWindow::on_replyFinished(QNetworkReply *reply)
 {
     //获得接受数据的形式
@@ -159,6 +148,18 @@ void MainWindow::on_replyFinished(QNetworkReply *reply)
     }
 }
 
+QByteArray MainWindow::GetSignMD5()
+{
+    //拼接签名
+    QString sign = appID + srcData.toUtf8() + salt + key;
+
+    qDebug() << "sign=" << sign;
+
+    //生成md5
+    QByteArray md5 = QCryptographicHash::hash(sign.toUtf8(), QCryptographicHash::Md5);
+
+    return md5;
+}
 
 void MainWindow::on_translateAction_triggered()
 {
@@ -181,7 +182,8 @@ void MainWindow::on_translateAction_triggered()
     //生成md5
     QString md5 = GetSignMD5().toHex();
 
-    QString status = QString("q=%1&from=%2&to=%3&appid=%4&salt=%5&sign=%6").arg(srcData).arg(from).arg(to).arg(appID).arg(salt).arg(md5);
+    QString status = "q=" + srcData.toUtf8() + "&from=" + from + "&to=" + to + "&appid=" + appID + "&salt=" + salt + "&sign=" + md5;
+    qDebug() << "status=" << status;
 
     //设置网络 发送请求
     QNetworkRequest request;
